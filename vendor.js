@@ -4,11 +4,22 @@ require('dotenv').config();
 const events = require('./events.js');
 const faker = require('faker')
 
-events.on('delivered', delivered);
+//https://www.sitepoint.com/delay-sleep-pause-wait/
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
 
-function delivered(payload) {
-  console.log(`VENDOR: Thank you for delivering ${payload.randomOrderID}.`)
-  console.log(`TIME: ` + Date.now() + `\nSTORE: ${payload.storeName}\nNAME: ${payload.randomName}\nADDRESS:${payload.randomAddress}\nORDER_ID: ${payload.randomOrderID}\n`);
+events.on('finalized', thanks);
+
+function thanks(payload) {
+  setTimeout( () => {
+    console.log(`VENDOR: Thank you for delivering ${payload.randomOrderID}.\n`)
+    console.log(`TIME: ` + Date.now() + `\nSTORE: ${payload.storeName}\nNAME: ${payload.randomName}\nADDRESS:${payload.randomAddress}\nORDER_ID: ${payload.randomOrderID}\n`);
+  }, 1000)
 }
 
 setInterval( () => {
@@ -20,6 +31,6 @@ setInterval( () => {
   }
   console.log(`TIME: ` + Date.now())
   events.emit('pickup', order);
-}, 3000)
+}, 5000)
 
-module.exports = { delivered };
+module.exports = { thanks };

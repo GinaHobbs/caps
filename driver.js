@@ -1,32 +1,23 @@
 'user strict'
 
-const { delivered } = require('./vendor.js')
-
-//https://www.sitepoint.com/delay-sleep-pause-wait/
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
 const events = require('./events.js');
 
-events.on('pickup', pickedUp);
+events.on('ready', pickup);
 
-function pickedUp(payload) {
-  sleep(1000);
-  console.log(`DRIVER: picked up ${payload.randomOrderID}`)
-  events.emit('in-transit', transit)
+function pickup(payload) {
+  setTimeout( () => {
+    console.log(`DRIVER: picked up ${payload.randomOrderID}`)
+    events.emit('in-transit', payload)
+  }, 1000)
 }
 
 events.on('in-transit', transit)
 
 function transit(payload) {
-  sleep(1000)
-  console.log(`DRIVER: Delivered ${payload.randomOrderID}`)
-  events.emit('delivered', delivered)
+  setTimeout( () => {
+    console.log(`DRIVER: Delivered ${payload.randomOrderID}\n`)
+    events.emit('delivered', payload)
+  }, 1000)
 }
 
-module.exports = { pickedUp, transit } 
+module.exports = { pickup, transit } 
